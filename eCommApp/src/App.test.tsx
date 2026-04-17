@@ -14,4 +14,10 @@ describe('App', () => {
     // The app should render without errors
     expect(container).toBeTruthy();
   });
+
+  it('renders contact page when navigating to contact route', () => {
+    window.history.pushState({}, '', '/contact');
+    render(<App />);
+    expect(screen.getByRole('heading', { name: 'Contact Us' })).toBeInTheDocument();
+  });
 });
