@@ -14,6 +14,7 @@ describe('Header', () => {
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Products')).toBeInTheDocument();
     expect(screen.getByText('Cart')).toBeInTheDocument();
+    expect(screen.getByText('Contact Us')).toBeInTheDocument();
     expect(screen.getByText('Admin Login')).toBeInTheDocument();
   });
 
@@ -23,11 +24,13 @@ describe('Header', () => {
     const homeLink = screen.getByText('Home').closest('a');
     const productsLink = screen.getByText('Products').closest('a');
     const cartLink = screen.getByText('Cart').closest('a');
+    const contactLink = screen.getByText('Contact Us').closest('a');
     const loginLink = screen.getByText('Admin Login').closest('a');
     
     expect(homeLink).toHaveAttribute('href', '/');
     expect(productsLink).toHaveAttribute('href', '/products');
     expect(cartLink).toHaveAttribute('href', '/cart');
+    expect(contactLink).toHaveAttribute('href', '/contact');
     expect(loginLink).toHaveAttribute('href', '/login');
   });
 
