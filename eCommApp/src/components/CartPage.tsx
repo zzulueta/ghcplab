@@ -14,7 +14,9 @@ const CartPage = () => {
         throw new Error('CartContext must be used within a CartProvider');
     }
 
-    const { cartItems, clearCart } = cartContext;
+    const { cartItems, updateQuantity, removeFromCart, clearCart } = cartContext;
+
+    const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     const handleCheckout = () => {
         setIsCheckingOut(true);
@@ -70,11 +72,29 @@ const CartPage = () => {
                                         <div className="cart-item-info">
                                             <h3>{item.name}</h3>
                                             <p>Price: ${item.price.toFixed(2)}</p>
-                                            <p>Quantity: {item.quantity}</p>
+                                            <div className="quantity-controls">
+                                                <button
+                                                    className="quantity-btn"
+                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                    aria-label={`Decrease quantity of ${item.name}`}
+                                                >−</button>
+                                                <span className="quantity-value">{item.quantity}</span>
+                                                <button
+                                                    className="quantity-btn"
+                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                    aria-label={`Increase quantity of ${item.name}`}
+                                                >+</button>
+                                            </div>
+                                            <button
+                                                className="remove-btn"
+                                                onClick={() => removeFromCart(item.id)}
+                                                aria-label={`Remove ${item.name} from cart`}
+                                            >Remove</button>
                                         </div>
                                     </div>
                                 ))}
                             </div>
+                            <p className="cart-total">Total: ${cartTotal.toFixed(2)}</p>
                             <button onClick={handleCheckout} className="checkout-btn">Checkout</button>
                         </>
                     )}

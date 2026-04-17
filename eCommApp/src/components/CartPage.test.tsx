@@ -46,6 +46,8 @@ const mockCartItems: CartItem[] = [
 const mockCartContext = {
     cartItems: mockCartItems,
     addToCart: vi.fn(),
+    updateQuantity: vi.fn(),
+    removeFromCart: vi.fn(),
     clearCart: vi.fn()
 };
 
@@ -70,14 +72,17 @@ describe('CartPage', () => {
         expect(screen.getByText('Test Product 2')).toBeInTheDocument();
         expect(screen.getByText('Price: $29.99')).toBeInTheDocument();
         expect(screen.getByText('Price: $49.99')).toBeInTheDocument();
-        expect(screen.getByText('Quantity: 2')).toBeInTheDocument();
-        expect(screen.getByText('Quantity: 1')).toBeInTheDocument();
+        // quantity values shown in quantity controls
+        expect(screen.getAllByText('2')[0]).toBeInTheDocument();
+        expect(screen.getAllByText('1')[0]).toBeInTheDocument();
     });
 
     it('displays empty cart message when cart is empty', () => {
         const emptyContext = {
             cartItems: [],
             addToCart: vi.fn(),
+            updateQuantity: vi.fn(),
+            removeFromCart: vi.fn(),
             clearCart: vi.fn()
         };
         renderWithCartContext(emptyContext);
@@ -173,5 +178,42 @@ describe('CartPage', () => {
         }).toThrow('CartContext must be used within a CartProvider');
         
         consoleSpy.mockRestore();
+    });
+
+    it('calls updateQuantity with incremented value when + button is clicked', async () => {
+        const user = userEvent.setup();
+        renderWithCartContext();
+
+        const increaseButtons = screen.getAllByLabelText(/Increase quantity of/);
+        await user.click(increaseButtons[0]);
+
+        expect(mockCartContext.updateQuantity).toHaveBeenCalledWith('1', 3);
+    });
+
+    it('calls updateQuantity with decremented value when - button is clicked', async () => {
+        const user = userEvent.setup();
+        renderWithCartContext();
+
+        const decreaseButtons = screen.getAllByLabelText(/Decrease quantity of/);
+        await user.click(decreaseButtons[0]);
+
+        expect(mockCartContext.updateQuantity).toHaveBeenCalledWith('1', 1);
+    });
+
+    it('calls removeFromCart when Remove button is clicked', async () => {
+        const user = userEvent.setup();
+        renderWithCartContext();
+
+        const removeButtons = screen.getAllByText('Remove');
+        await user.click(removeButtons[0]);
+
+        expect(mockCartContext.removeFromCart).toHaveBeenCalledWith('1');
+    });
+
+    it('displays cart total', () => {
+        renderWithCartContext();
+
+        // Total: 29.99 * 2 + 49.99 * 1 = 109.97
+        expect(screen.getByText('Total: $109.97')).toBeInTheDocument();
     });
 });
