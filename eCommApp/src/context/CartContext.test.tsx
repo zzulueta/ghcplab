@@ -115,6 +115,64 @@ describe('CartContext', () => {
     expect(result.current?.cartItems).toEqual([]);
   });
 
+  it('should update quantity of an item', () => {
+    const { result } = renderHook(() => useContext(CartContext), { wrapper });
+
+    act(() => {
+      result.current?.addToCart(mockProduct);
+    });
+
+    act(() => {
+      result.current?.updateQuantity('1', 5);
+    });
+
+    expect(result.current?.cartItems[0].quantity).toBe(5);
+  });
+
+  it('should remove item when quantity is updated to zero', () => {
+    const { result } = renderHook(() => useContext(CartContext), { wrapper });
+
+    act(() => {
+      result.current?.addToCart(mockProduct);
+    });
+
+    act(() => {
+      result.current?.updateQuantity('1', 0);
+    });
+
+    expect(result.current?.cartItems).toHaveLength(0);
+  });
+
+  it('should remove item when quantity is updated to a negative number', () => {
+    const { result } = renderHook(() => useContext(CartContext), { wrapper });
+
+    act(() => {
+      result.current?.addToCart(mockProduct);
+    });
+
+    act(() => {
+      result.current?.updateQuantity('1', -1);
+    });
+
+    expect(result.current?.cartItems).toHaveLength(0);
+  });
+
+  it('should remove item from cart', () => {
+    const { result } = renderHook(() => useContext(CartContext), { wrapper });
+
+    act(() => {
+      result.current?.addToCart(mockProduct);
+      result.current?.addToCart(mockProduct2);
+    });
+
+    act(() => {
+      result.current?.removeFromCart('1');
+    });
+
+    expect(result.current?.cartItems).toHaveLength(1);
+    expect(result.current?.cartItems[0].id).toBe('2');
+  });
+
   it('should preserve product properties when adding to cart', () => {
     const { result } = renderHook(() => useContext(CartContext), { wrapper });
     
