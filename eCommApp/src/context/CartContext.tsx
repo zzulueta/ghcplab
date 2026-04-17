@@ -48,7 +48,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const removeFromCart = (productId: string) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+        updateQuantity(productId, 0);
     };
 
     return (
